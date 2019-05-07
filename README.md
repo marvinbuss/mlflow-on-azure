@@ -19,6 +19,7 @@ If you want to test the Docker container locally, then please follow these steps
 
 ## Deployment on Azure Kubernetes Service
 ![AKS Deployment of MLFlow tracking server](pictures/architecture.png?raw=true "AKS Deployment of MLFlow tracking server")
+
 If you want to deploy the MLFlow tracking server on an Azure Kubernetes Service (AKS), where you will later also deploy your machine learning or deep learning models once they go into production, then please follow these steps:
 
 0. NOTE: On Windows you can also use the Linux subsystem for the deployment.
