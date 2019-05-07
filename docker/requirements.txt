@@ -1,0 +1,4 @@
+mlflow==0.9.1
+azure-storage==0.36.0
+msrestazure==0.6.0
+azure-cli==2.0.64
