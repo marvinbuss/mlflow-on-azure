@@ -13,8 +13,8 @@ If you want to test the Docker container locally, then please follow these steps
 3. Open your terminal or command line and navigate to the unpacked folder (navigate to the `docker` folder of this project).
 3. Build the Docker image with the following command: `docker build -t <your-docker-container-name> -f Dockerfile . --no-cache`
 4. Deploy a storage account in your Azure subscription and create a container in the blob storage.
-5. Write down the storage account name (`<storage-account>`), the storage access key (`<access-key>`) and the name of the blob container (`<blob-container>`).
-6. Once the build was successful and the storage account has been created you can run the Docker image with the following command: `docker run -p 5000:5000 --env MLFLOW_SERVER_DEFAULT_ARTIFACT_ROOT=wasbs://<blob-container>@<storage-account>.blob.core.windows.net/mlartefacts --env AZURE_STORAGE_ACCESS_KEY=<access-key> -it <your-docker-container-name>:latest`
+5. Write down the storage account name (`<storage-account>`), the storage connection string (`<connection-string>`) and the name of the blob container (`<blob-container>`).
+6. Once the build was successful and the storage account has been created you can run the Docker image with the following command: `docker run -p 5000:5000 --env MLFLOW_SERVER_DEFAULT_ARTIFACT_ROOT=wasbs://<blob-container>@<storage-account>.blob.core.windows.net/mlartefacts --env AZURE_STORAGE_CONNECTION_STRING==<connection-string> -it <your-docker-container-name>:latest`
 7. Open the MLFlow hub by visiting: https://localhost:5000 (On Windows, do not open https://0.0.0.0:5000 as shown in the command line)
 
 ## Deployment on Azure Kubernetes Service
