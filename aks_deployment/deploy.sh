@@ -11,7 +11,7 @@ set -o nounset
 RG_NAME=mlflowserver-rg
 RG_LOCATION=westeurope
 
-AKS_IMAGE=mrnivram/mlflow:0.9.1
+AKS_IMAGE=mrnivram/mlflow:latest
 AKS_NAME=mlflowaks
 AKS_STORAGE_ACCOUNT_NAME=storage$RANDOM
 AKS_STORAGE_CONTAINER_NAME=mlflow

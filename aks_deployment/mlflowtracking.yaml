@@ -1,4 +1,4 @@
-apiVersion: apps/v1beta1
+apiVersion: apps/version1.0.0
 kind: Deployment
 metadata:
   name: mlflow-tracking-front
@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: mlflow-tracking-front
-        image: mrnivram/mlflow:0.9.1
+        image: mrnivram/mlflow:latest
         ports:
         - containerPort: 5000
         env:

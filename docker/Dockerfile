@@ -1,4 +1,4 @@
-FROM python:3.7.0-stretch
+FROM python:3.7.3-stretch
 
 # define default server env variables
 ENV MLFLOW_SERVER_HOST 0.0.0.0
@@ -21,4 +21,5 @@ COPY . /
 RUN apt-get update
 RUN pip install -r requirements.txt
 
-ENTRYPOINT ["./startup.sh"]
+RUN ["chmod", "+x", "./startup.sh"]
+ENTRYPOINT ["sh", "./startup.sh"]
