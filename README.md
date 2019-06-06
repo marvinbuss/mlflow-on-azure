@@ -20,7 +20,7 @@ If you want to test the Docker container locally, then please follow these steps
 7. Open the MLFlow hub by visiting: https://localhost:5000 (On Windows, do not open https://0.0.0.0:5000 as shown in the command line)
 
 ## Deployment on Azure Kubernetes Service
-![AKS Deployment of MLFlow tracking server](pictures/architecture.png?raw=true "AKS Deployment of MLFlow tracking server")
+<img src="pictures/architecture.png" alt="AKS Deployment of MLFlow tracking server" width="300"/>
 
 If you want to deploy the MLFlow tracking server on an Azure Kubernetes Service (AKS), where you will later also deploy your machine learning or deep learning models once they go into production, then please follow these steps:
 
