@@ -1,15 +1,21 @@
 import os
 import mlflow
 
+# parameters
+EXPERIMENT_NAME = "<experiment-name>"
+AZURE_STORAGE_CONNECTION_STRING = "<connection-string>"
+TRACKING_URI = "<tracking-uri>" # e.g. http://localhost:5000
+
 # setup of environment
-os.environ["AZURE_STORAGE_CONNECTION_STRING"] = "<storage-connection-string>"
-mlflow.set_tracking_uri("http://<your-ip>:<your-port>")
+os.environ["AZURE_STORAGE_CONNECTION_STRING"] = AZURE_STORAGE_CONNECTION_STRING
+mlflow.set_tracking_uri(TRACKING_URI)
 
 # create experiment
-#experiment_id = mlflow.create_experiment("test")
+#experiment_id = mlflow.create_experiment(EXPERIMENT_NAME, artifact_location="/")
+experiment_id = mlflow.set_experiment(EXPERIMENT_NAME)
 
 # create run and save 
-with mlflow.start_run(run_name="run"): #, experiment_id=experiment_id):
+with mlflow.start_run(run_name="run", experiment_id=experiment_id):
     mlflow.log_param("a", 1)
     mlflow.log_param("b", 2)
     
