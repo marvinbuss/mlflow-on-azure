@@ -1,4 +1,4 @@
-apiVersion: apps/version1.0.0
+apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
   name: mlflow-tracking-front
