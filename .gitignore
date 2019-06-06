@@ -1,3 +1,5 @@
 .idea/*
 *.iml
 /.vs/slnx.sqlite
+/.vs/mlflow-on-aks/v16/.suo
+/.vs/VSWorkspaceState.json

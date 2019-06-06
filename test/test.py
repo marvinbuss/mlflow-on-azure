@@ -2,9 +2,9 @@ import os
 import mlflow
 
 # parameters
-EXPERIMENT_NAME = "<experiment-name>"
 AZURE_STORAGE_CONNECTION_STRING = "<connection-string>"
 TRACKING_URI = "<tracking-uri>" # e.g. http://localhost:5000
+EXPERIMENT_NAME = "myexperiment"
 
 # setup of environment
 os.environ["AZURE_STORAGE_CONNECTION_STRING"] = AZURE_STORAGE_CONNECTION_STRING
