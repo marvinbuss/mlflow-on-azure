@@ -1,7 +1,9 @@
-# MLFlow Docker Container and Deployment on an Azure Kubernetes Service (AKS)
-This project can be used to deploy the MLFlow Tracking Server (version 0.9.1) in a Docker container locally or on Azure. More precisely, it can be used to deploy the Docker image on an Azure Kubernetes Service (AKS), where you will probably also host other services or your ML or DL models.
+![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/mrnivram/mlflow.svg?style=flat-square)
 
-I updated the MLFlow version to 0.9.1, optimized the storage behaviour of logs and used existing projects, that you can find here:
+# MLFlow Docker Container and Deployment on an Azure Kubernetes Service (AKS)
+This project can be used to deploy the MLFlow Tracking Server (version 1.0.0) in a Docker container locally or on Azure. More precisely, it can be used to deploy the Docker image on an Azure Kubernetes Service (AKS), where you will probably also host other services or your ML or DL models.
+
+I updated the MLFlow version to 1.0.0, optimized the storage behaviour of logs and used existing projects, that you can find here:
 * https://github.com/devlace/mlflow-tracking-azure
 * https://github.com/Ycallaer/mlflowdocker
 
@@ -49,12 +51,12 @@ If you want to test your local deployment or the deployment on AKS, then please 
 
 1. Navigate to the `test` folder once you unpacked the zip folder.
 2. Write down the connection string of your Azure storage account and the IP and port of the MLFlow Tracking Server (https://localhost:5000 in case of local deployemnt).
-3. Insert the values in `test.py`:
-    - Insert your connection string into the placeholder `<storage-connection-string>`.
-    - Insert the IP address into the placeholder `<your-ip>`.
-    - Insert the port into the placeholder `<your-port>` (default port is 5000).
-4. Run the python file `test.py`.
-5. Open the page `<your-ip>:<your-port>` (default port is 5000) and view the logged run and values.
+3. Choose one of the provided examples `test.py` or `test_with_model.py`.
+3. Insert the values in the selected example:
+    - Insert your connection string into the placeholder `<connection-string>`.
+    - Insert the IP address and port into the placeholder `<tracking-uri>` (default port is 5000).
+4. Run the python file.
+5. Open the page `<your-ip>:<your-port>` (default port is 5000) and view the logged run, values and artifacts.
 
 **INFO:** The artifacts will be stored in the blob storage of the deployed Azure storage account. Other log data will be stored in the file store of another storage account that is located in the resource group of your AKS (the second one that gets automatically created when deploying an AKS cluster).
 
