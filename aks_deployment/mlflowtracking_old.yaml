@@ -14,7 +14,6 @@ spec:
         image: mrnivram/mlflow:latest
         ports:
         - containerPort: 5000
-          name: http
         env:
         - name: AZURE_STORAGE_CONNECTION_STRING
           valueFrom:
@@ -45,33 +44,28 @@ kind: Service
 metadata:
   name: mlflow-tracking-service
 spec:
-  type: ClusterIP
-  selector:
-    app: mlflow-tracking
+  type: LoadBalancer
   ports:
   - port: 5000
     targetPort: 5000
-    protocol: TCP
-    name: http
+  selector:
+    app: mlflow-tracking
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: mlflow-tracking-ingress
   annotations:
-    kubernetes.io/ingress.class: "traefik"
-    traefik.frontend.passHostHeader: "true"
-    traefik.backend.loadbalancer.sticky: "true"
-    traefik.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: traefik
 spec:
   rules:
-  - host: mlflow.westeurope.cloudapp.azure.com
+  - host: mlflow.localhost
     http:
       paths:
-      - path: /
+      - path: /mlflow
         backend:
           serviceName: mlflow-tracking-service
-          servicePort: 5000
+          servicePort: http
 ---
 kind: StorageClass
 apiVersion: storage.k8s.io/v1

@@ -64,5 +64,17 @@ kubectl create secret generic storage-secret \
     --from-literal=azurestorageaccountkey="$AZURE_STORAGE_ACCESS_KEY" \
     --from-literal=azurestorageconnectionstring="$AZURE_STORAGE_CONNECTION_STRING"
 
+echo "Deploying Tiller"
+kubectl apply -f helm-rbac.yaml
+helm init --service-account tiller --node-selectors "beta.kubernetes.io/os"="linux"
+
+#kubectl create serviceaccount --namespace kube-system tiller
+#kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+#kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
+#helm init --upgrade --serviceAccount tiller
+
+echo "Deploying Traefik ingress controller to AKS using Helm chart"
+helm install --values values.yaml --name mytraefik --namespace kube-system stable/traefik 
+
 echo "Deploying MLFlow tracking server to AKS"
 kubectl apply -f mlflowtracking.yaml

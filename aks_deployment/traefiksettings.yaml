@@ -1,0 +1,19 @@
+replicas: 1
+dashboard:
+  enabled: true
+  domain: traefik-ui.minikube
+rbac:
+  enabled: true
+ssl:
+  enabled: true
+  permanentRedirect: true
+  insecureSkipVerify: true
+acme:
+  enabled: true
+  challengeType: http-01
+  email: <YOUR-EMAIL>
+  staging: false
+kubernetes:
+  namespaces:
+    - default
+    - kube-system
