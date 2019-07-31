@@ -1,9 +1,9 @@
 ![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/mrnivram/mlflow.svg?style=flat-square)
 
 # MLFlow Docker Container and Deployment on an Azure Kubernetes Service (AKS)
-This project can be used to deploy the MLFlow Tracking Server (version 1.0.0) in a Docker container locally or on Azure. More precisely, it can be used to deploy the Docker image on an Azure Kubernetes Service (AKS), where you will probably also host other services or your ML or DL models.
+This project can be used to deploy the MLFlow Tracking Server (version 1.1.0) in a Docker container locally or on Azure. More precisely, it can be used to deploy the Docker image on an Azure Kubernetes Service (AKS), where you will probably also host other services or your ML or DL models.
 
-I updated the MLFlow version to 1.0.0, optimized the storage behaviour of logs and used existing projects, that you can find here:
+I updated the MLFlow version to 1.1.0, optimized the storage behaviour of logs and used existing projects, that you can find here:
 * https://github.com/devlace/mlflow-tracking-azure
 * https://github.com/Ycallaer/mlflowdocker
 
