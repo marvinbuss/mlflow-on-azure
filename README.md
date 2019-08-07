@@ -1,13 +1,18 @@
-![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/mrnivram/mlflow.svg?style=flat-square)
+# 1. MLflow Docker Container and Deployment on Azure Web App for Containers (Linux)
+This project can be used to deploy the MLflow Tracking Server (version 1.1.0) in a Docker container locally or on Azure. More precisely, it can be used to deploy the Docker image on an Azure Web App, where you will probably also host other services or your ML or DL models.
 
-# MLFlow Docker Container and Deployment on an Azure Kubernetes Service (AKS)
-This project can be used to deploy the MLFlow Tracking Server (version 1.0.0) in a Docker container locally or on Azure. More precisely, it can be used to deploy the Docker image on an Azure Kubernetes Service (AKS), where you will probably also host other services or your ML or DL models.
+# 2. Features of Deplyoment
+The deployment has the following features:
+* Persistent storage across several instances and across restarts
+* All data is saved in a single Blob storage and a single container (can be adjusted)
+* All application settings are accessible via the Azure Portal and can be adjusted on the fly
+* Docker image supports SSH connection only within the Azure portal (Enterprise ready security)
+* Docker image is stored in private container registry (Azure Container Registry)
+* Detailed logs for the MLflow tracking server or the Azure Web App 
+* Optional: Continuous Integration and Continuous Deployment (CI/CD)
+* Optional: Azure AD Integration
 
-I updated the MLFlow version to 1.0.0, optimized the storage behaviour of logs and used existing projects, that you can find here:
-* https://github.com/devlace/mlflow-tracking-azure
-* https://github.com/Ycallaer/mlflowdocker
-
-## Local deployment
+## 3. Local deployment
 If you want to test the Docker container locally, then please follow these steps:
 
 1. Install [Docker](https://docs.docker.com/) on your machine.
@@ -17,48 +22,85 @@ If you want to test the Docker container locally, then please follow these steps
 4. Deploy a storage account in your Azure subscription and create a container in the blob storage.
 5. Write down the storage account name (`<storage-account>`), the storage connection string (`<connection-string>`) and the name of the blob container (`<blob-container>`).
 6. Once the build was successful and the storage account has been created you can run the Docker image with the following command: `docker run -p 5000:5000 --env MLFLOW_SERVER_DEFAULT_ARTIFACT_ROOT=wasbs://<blob-container>@<storage-account>.blob.core.windows.net/mlartefacts --env AZURE_STORAGE_CONNECTION_STRING==<connection-string> -it <your-docker-container-name>:latest`
-7. Open the MLFlow hub by visiting: https://localhost:5000 (On Windows, do not open https://0.0.0.0:5000 as shown in the command line)
+7. Open the MLflow hub by visiting: https://localhost:5000 (On Windows, do not open https://0.0.0.0:5000 as shown in the command line)
 
-## Deployment on Azure Kubernetes Service
-<img src="pictures/architecture.png" alt="AKS Deployment of MLFlow tracking server" width="200"/>
+## 4. Deployment on Azure Web App for Containers (Linux)
+### 4.1 Initial Deployment
+If you want to deploy the MLflow tracking server on an Azure Web App for Containers (Linux), then please follow these steps:
 
-If you want to deploy the MLFlow tracking server on an Azure Kubernetes Service (AKS), where you will later also deploy your machine learning or deep learning models once they go into production, then please follow these steps:
-
-0. NOTE: On Windows you can also use the Linux subsystem for the deployment.
+0. NOTE: On Windows you can also use the Windows subsystem for Linux (WSL) for the deployment.
 1. Clone the project to your local machine and unpack the zip file.
-2. Open your terminal and navigate to the unpacked folder (navigate to the `aks_deployment` folder of this project).
+2. Open your terminal and navigate to the unpacked folder (navigate to the main folder of this project).
 3. Open `deploy.sh` and adjust some settings, if required.
-    - RG_NAME = name of the resource group to which the resources will be deployed
-    - RG_LOCATION = location that is used for deployment of the resources
-    - AKS_NAME = name that is used for the AKS cluster
-    - AKS_STORAGE_ACCOUNT_NAME = name of the storage account that will be created
-    - AKS_STORAGE_CONTAINER_NAME = name of the container that will be created in the blob storage
-4. Open `mlflowtracking.yaml` and adjust some settings, if required.
-    - image = insert the name of your own image if you have made changes to it and uploaded it to Dockerhub
-    - replicas = change the number of replicas of the container
-    - containerPort = change the port of the container that is exposed by the service
-    - change other env variables, such as `AZURE_STORAGE_CONNECTION_STRING`, `MLFLOW_SERVER_DEFAULT_ARTIFACT_ROOT`, `MLFLOW_SERVER_FILE_STORE`, `MLFLOW_SERVER_HOST` and `MLFLOW_SERVER_PORT`, if required.
-5. Install [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest) and install [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
+    - `RG_NAME` = name of the resource group to which the resources will be deployed
+    - `RG_LOCATION` = location that is used for deployment of the resources
+    - `ACR_NAME` = name of the Azure Container Registry (ACR)
+    - `DOCKER_IMAGE_NAME` = name of the Docker image
+    - `DOCKER_IMAGE_TAG` = tag of the Docker image
+    - `ASP_NAME` = name of the Azure App Service Plan
+    - `WEB_APP_NAME` = name of the Azure Web App
+    - `MLFLOW_HOST` = host variable for the MLflow tracking server
+    - `MLFLOW_PORT` = port variable for the MLflow tracking server
+    - `MLFLOW_WORKERS` = workers variable for the MLflow tracking server
+    - `MLFLOW_FILESTORE` = backend-store-uri variable for the MLflow tracking server (should be a folder within the `STORAGE_MOUNT_POINT`)
+    - `STORAGE_ACCOUNT_NAME` = name of the storage account taht is used for storing data (artifacts + pramaters and variables)
+    - `STORAGE_CONTAINER_NAME` = name of the blob container in the storage account
+    - `STORAGE_MOUNT_POINT` = mount point of the blob container in the web app
+    NOTE: Azure Active Directory Authentication cannot be automated via Azure CLI, because the secret key is not submitted. Due to this, I will explain later in this tutorial how to activate this feature manually. Once this can be automated, you can use the commands from line 180 to 201 in `deploy.sh` to automate this process. This processs requires the following parameters:
+    -  `AAD_ISSUER_URL` = issuer URL of your AAD (Use this tutorial to find the variable of your AAD: https://docs.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad#-configure-with-advanced-settings)
+    - `SP_NAME` = name of the service principal 
+5. Install [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
 6. Open your terminal and login into azure CLI:
     - Run `az login` to login to Azure.
     - Run `az account set -s <subscription-id>` to set the target azure subscription.
 7. Run `./deploy.sh` and wait for the deployment to finish.
-8. Once the execution of the script finishes you can check the deployment and retrieve the IP and port that is exposed by the service by executing `kubectl get services` (please wait, if the external IP of the `mlflow-tracking-front` service is set to `<pending>`).
-9. Open the page `<your-ip>:<your-port>` (default port is 5000).
+8. Once the execution of the script finishes you can check the deployed resources in the [Azure Portal](https://portal.azure.com). Open `Resource Groups` and click on the resource group with the name of the variable `RG_NAME`. The resource group should include the following resources: Azure App Service, Azure App Service Plan, Azure Container Registry and an Azure Storage Account.
+9. Open `https://<WEB_APP_NAME>.azurewebsites.net` (Insert value of your variable `WEB_APP_NAME` in the URL) and check whether your service works as expected.
 
-## Test the deployment
-If you want to test your local deployment or the deployment on AKS, then please follow these steps:
+### 4.2 Enable CI/CD
+NOTE: Due to a bug in the Azure CLI, this is not automated in the `deploy.sh` script yet. The command is already included but commented out (line 119 to 125).
 
-1. Navigate to the `test` folder once you unpacked the zip folder.
-2. Write down the connection string of your Azure storage account and the IP and port of the MLFlow Tracking Server (https://localhost:5000 in case of local deployemnt).
-3. Choose one of the provided examples `test.py` or `test_with_model.py`.
-3. Insert the values in the selected example:
-    - Insert your connection string into the placeholder `<connection-string>`.
-    - Insert the IP address and port into the placeholder `<tracking-uri>` (default port is 5000).
-4. Run the python file.
-5. Open the page `<your-ip>:<your-port>` (default port is 5000) and view the logged run, values and artifacts.
+1. Open the [Azure Portal](https://portal.azure.com) and navigate to your resource group with the name of the variable `RG_NAME`.
+2. Click on your Web APP, which should have the name of the variable `WEB_APP_NAME`.
+3. Follow the steps in this tutorial to enable CI/CD: https://docs.microsoft.com/en-us/azure/app-service/containers/app-service-linux-ci-cd#enable-continuous-deployment-with-acr
 
-**INFO:** The artifacts will be stored in the blob storage of the deployed Azure storage account. Other log data will be stored in the file store of another storage account that is located in the resource group of your AKS (the second one that gets automatically created when deploying an AKS cluster).
+### 4.3 Enable AAD Integration
+1. Open the [Azure Portal](https://portal.azure.com) and navigate to your resource group with the name of the variable `RG_NAME`.
+2. Click on your Web APP, which should have the name of the variable `WEB_APP_NAME`.
+3. Follow the steps in this tutorial to enable AAD Integration: https://docs.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad
+4. IMPORTANT: Save the secret, client ID and tenant ID of the Service Principal in a Notepad, because this is needed when using the MLflow library. You can also generate additional keys for your service principal. More on that can be found here: https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal#get-values-for-signing-in
 
-## MLFLow documentation
-Find more details about the use of MLFlow on the following website: https://mlflow.org/docs/latest/index.html
+### 4.4 Use MLflow library with AAD enabled MLflow service
+The samples show how to authenticate with the MLflow library against the tracking server with AAD authentication enabled.
+
+1. Take note of the secret (`KEY`), client ID (`CLIENT`) and tenant ID (`TENANT_ID`) of your service principal.
+2. Take note of the tracking URI of your MLflow server (`TRACKING_URI`). This URI should look like `https://<WEB_APP_NAME>.azurewebsites.net` (https://localhost:5000 in case of local deployment).
+3. Take note of the connection string (`AZURE_STORAGE_CONNECTION_STRING`) of your storage account with the name of the variable `STORAGE_ACCOUNT_NAME`.
+4. Navigate to the `test` folder of this project.
+5. Open one of the provided examples `test.py` or `test_with_model.py`.
+6. Insert the values in the selected example:
+    - `TENANT_ID`: Insert your service principal tenant ID into the placeholder `<tenant-id>`.
+    - `CLIENT`: Insert your service principal client ID into the placeholder `<client-id>`.
+    - `KEY`: Insert your service principal secret into the placeholder `<secret>`.
+    - `AZURE_STORAGE_CONNECTION_STRING`: Insert your connection string into the placeholder `<connection-string>`.
+    - `TRACKING_URI`: Insert the tracking URI into the placeholder `<tracking-uri>`.
+    - `EXPERIMENT_NAME`: Choose an experiment name.
+5. Run the python file.
+6. Open you MLflow tracking server URI and view the logged run, values and artifacts.
+
+### 4.5 SSH to Docker Container
+1. Open the [Azure Portal](https://portal.azure.com) and navigate to your resource group with the name of the variable `RG_NAME`.
+2. Click on your Web APP, which should have the name of the variable `WEB_APP_NAME`.
+3. Select `Development Tools` > `SSH`.
+4. Alternatively follow these instructions: https://docs.microsoft.com/en-us/azure/app-service/containers/app-service-linux-ssh-support#open-ssh-session-in-browser
+
+## 4.6 Monitor app
+1. Open the [Azure Portal](https://portal.azure.com) and navigate to your resource group with the name of the variable `RG_NAME`.
+2. Click on your Web APP, which should have the name of the variable `WEB_APP_NAME`.
+3. Select `Diagnose and solve problems`.
+
+## DEPRECATED: Deployment on Azure Kubernetes Service
+Please open the branch [aks-deployment](/marvinbuss/mlflow-on-azure/tree/aks-deployment) for deploying MLflow to an AKS cluster.
+
+## MLfLow documentation
+Find more details about the use of MLflow on the following website: https://mlflow.org/docs/latest/index.html
