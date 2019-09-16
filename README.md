@@ -107,7 +107,7 @@ The samples show how to authenticate with the MLflow library against the trackin
 3. Select `Diagnose and solve problems`.
 
 # DEPRECATED: Deployment on Azure Kubernetes Service
-Please open the branch [aks-deployment](/marvinbuss/mlflow-on-azure/tree/aks-deployment) for deploying MLflow to an AKS cluster.
+Please open the branch [aks-deployment](https://github.com/marvinbuss/mlflow-on-azure/tree/aks-deployment) for deploying MLflow to an AKS cluster.
 
 # MLfLow documentation
 Find more details about the use of MLflow on the following website: https://mlflow.org/docs/latest/index.html
