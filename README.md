@@ -4,7 +4,7 @@
 ![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/mrnivram/mlflow)
 
 # 1. MLflow Tracking Server Docker Container and Deployment on Azure Web App for Containers (Linux)
-This project can be used to deploy the MLflow Tracking Server (version 1.1.0) in a Docker container locally or on Azure. More precisely, it can be used to deploy the Docker image on an Azure Web App, where you will probably also host other services or your ML or DL models.
+This project can be used to deploy the MLflow Tracking Server (version 1.3.0) in a Docker container locally or on Azure. More precisely, it can be used to deploy the Docker image on an Azure Web App, where you will probably also host other services or your ML or DL models.
 
 # 2. Features of Deployment
 The deployment has the following features:
