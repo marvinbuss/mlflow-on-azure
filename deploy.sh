@@ -8,6 +8,9 @@ set -o nounset
 #####################
 # PARAMETERS
 
+# Azure parameters
+SUBSCRIPTION_ID=<your-subscription-id>
+
 # Resource group parameters
 RG_NAME=mlflow-rg
 RG_LOCATION=westeurope
@@ -37,6 +40,16 @@ STORAGE_CONTAINER_NAME=mlflow
 STORAGE_MOUNT_POINT=/mlruns
 STORAGE_FILE_SHARE_NAME=mlflow
 STORAGE_FILE_SHARE_SIZE=2
+
+#####################
+# LOGIN
+
+echo "Logging into Azure"
+az login
+
+echo "Setting default subscription: $SUBSCRIPTION_ID"
+az account set \
+    --subscription $SUBSCRIPTION_ID
 
 #####################
 # DEPLOYMENT
