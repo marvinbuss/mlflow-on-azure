@@ -9,7 +9,7 @@ This project can be used to deploy the MLflow Tracking Server (version 1.5.0) in
 # 2. Features of Deployment
 The deployment has the following features:
 * Persistent storage across several instances and across restarts
-* All data is saved in a single storage account: Blob for artifacts and file share for metrics
+* All data is saved in a single storage account: Blob for artifacts and file share for metrics (NOTE: [mounted blob will be read only as of February 2nd 2020](https://github.com/Azure/app-service-linux-docs/blob/master/BringYourOwnStorage/mounting_azure_blob.md))
 * All application settings are accessible via the Azure Portal and can be adjusted on the fly
 * Docker image supports SSH connection only within the Azure portal (Enterprise ready security)
 * Docker image is stored in private container registry (Azure Container Registry)
