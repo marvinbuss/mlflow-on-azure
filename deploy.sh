@@ -35,6 +35,8 @@ MLFLOW_FILESTORE=/mlruns/mlruns
 STORAGE_ACCOUNT_NAME=storage$RANDOM
 STORAGE_CONTAINER_NAME=mlflow
 STORAGE_MOUNT_POINT=/mlruns
+STORAGE_FILE_SHARE_NAME=mlflow
+STORAGE_FILE_SHARE_SIZE=2
 
 #####################
 # DEPLOYMENT
@@ -51,10 +53,16 @@ az storage account create \
     --name $STORAGE_ACCOUNT_NAME \
     --sku Standard_LRS
 
-echo "Creating storage account for MLFlow artifacts: $STORAGE_CONTAINER_NAME"
+echo "Creating storage container for MLflow artifacts: $STORAGE_CONTAINER_NAME"
 az storage container create \
     --name $STORAGE_CONTAINER_NAME \
     --account-name $STORAGE_ACCOUNT_NAME
+
+echo "Creating file share for mounting to MLflow container: $STORAGE_CONTAINER_NAME"
+az storage share create \
+    --name $STORAGE_FILE_SHARE_NAME \
+    --account-name $STORAGE_ACCOUNT_NAME \
+    --quota $STORAGE_FILE_SHARE_SIZE
 
 echo "Exporting storage keys: $STORAGE_ACCOUNT_NAME"
 export STORAGE_ACCESS_KEY=$(az storage account keys list --resource-group $RG_NAME --account-name $STORAGE_ACCOUNT_NAME --query "[0].value" --output tsv)
@@ -116,13 +124,12 @@ az webapp config container set \
     --docker-registry-server-password $ACR_PASSWORD \
     --enable-app-service-storage true
 
-# Not working due to bug in Azure CLI
-# https://github.com/Azure/azure-cli/issues/7261
-#echo "Enable continuous deployment for web app"
-#az webapp deployment container config \
-#    --name $WEB_APP_NAME \
-#    --resource-group $RG_NAME \
-#    --enable-cd true
+# Should be fixed according to: https://github.com/Azure/azure-cli/issues/7261
+echo "Enable continuous deployment for web app"
+az webapp deployment container config \
+    --name $WEB_APP_NAME \
+    --resource-group $RG_NAME \
+    --enable-cd true
 
 echo "Setting Azure container registry credentials"
 az webapp config appsettings set \
@@ -167,7 +174,7 @@ az webapp config storage-account add \
     --resource-group $RG_NAME \
     --name $WEB_APP_NAME \
     --custom-id $STORAGE_ACCOUNT_NAME \
-    --storage-type AzureBlob \
+    --storage-type AzureFiles \
     --share-name $STORAGE_CONTAINER_NAME \
     --account-name $STORAGE_ACCOUNT_NAME \
     --access-key $STORAGE_ACCESS_KEY \
