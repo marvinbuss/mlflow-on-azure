@@ -55,7 +55,8 @@ If you want to deploy the MLflow tracking server on an Azure Web App for Contain
     - `STORAGE_MOUNT_POINT` = mount point of the blob container in the web app
     - `STORAGE_FILE_SHARE_NAME` = name of the file share in the storage account
     - `STORAGE_FILE_SHARE_SIZE` = reserved size of the file share in GB
-    NOTE: Azure Active Directory Authentication cannot be automated via Azure CLI, because the secret key is not submitted. Due to this, I will explain later in this tutorial how to activate this feature manually. Once this can be automated, you can use the commands from line 180 to 201 in `deploy.sh` to automate this process. This processs requires the following parameters:
+
+NOTE: Azure Active Directory Authentication cannot be automated via Azure CLI, because the secret key is not submitted. Due to this, I will explain later in this tutorial how to activate this feature manually. Once this can be automated, you can use the commands from line 180 to 201 in `deploy.sh` to automate this process. This processs requires the following parameters:
     -  `AAD_ISSUER_URL` = issuer URL of your AAD (Use this tutorial to find the variable of your AAD: https://docs.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad#-configure-with-advanced-settings)
     - `SP_NAME` = name of the service principal 
 5. Install [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
