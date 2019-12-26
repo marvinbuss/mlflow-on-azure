@@ -114,3 +114,5 @@ Please open the branch [aks-deployment](https://github.com/marvinbuss/mlflow-on-
 
 # MLfLow documentation
 Find more details about the use of MLflow on the following website: https://mlflow.org/docs/latest/index.html
+
+NOTE: MLflow Model Registry does not support file based stores, yet. ([Link to bug on GitHub](https://github.com/mlflow/mlflow/issues/1975))
