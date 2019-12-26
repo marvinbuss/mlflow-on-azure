@@ -4,12 +4,12 @@
 ![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/mrnivram/mlflow)
 
 # 1. MLflow Tracking Server Docker Container and Deployment on Azure Web App for Containers (Linux)
-This project can be used to deploy the MLflow Tracking Server (version 1.3.0) in a Docker container locally or on Azure. More precisely, it can be used to deploy the Docker image on an Azure Web App, where you will probably also host other services or your ML or DL models.
+This project can be used to deploy the MLflow Tracking Server (version 1.5.0) in a Docker container locally or on Azure. More precisely, it can be used to deploy the Docker image on an Azure Web App, where you will probably also host other services or your ML or DL models.
 
 # 2. Features of Deployment
 The deployment has the following features:
 * Persistent storage across several instances and across restarts
-* All data is saved in a single Blob storage and a single container (can be adjusted)
+* All data is saved in a single storage account: Blob for artifacts and file share for metrics
 * All application settings are accessible via the Azure Portal and can be adjusted on the fly
 * Docker image supports SSH connection only within the Azure portal (Enterprise ready security)
 * Docker image is stored in private container registry (Azure Container Registry)
@@ -50,9 +50,11 @@ If you want to deploy the MLflow tracking server on an Azure Web App for Contain
     - `MLFLOW_PORT` = port variable for the MLflow tracking server
     - `MLFLOW_WORKERS` = workers variable for the MLflow tracking server
     - `MLFLOW_FILESTORE` = backend-store-uri variable for the MLflow tracking server (should be a folder within the `STORAGE_MOUNT_POINT`)
-    - `STORAGE_ACCOUNT_NAME` = name of the storage account taht is used for storing data (artifacts + pramaters and variables)
+    - `STORAGE_ACCOUNT_NAME` = name of the storage account that is used for storing data (artifacts + parameters and variables)
     - `STORAGE_CONTAINER_NAME` = name of the blob container in the storage account
     - `STORAGE_MOUNT_POINT` = mount point of the blob container in the web app
+    - `STORAGE_FILE_SHARE_NAME` = name of the file share in the storage account
+    - `STORAGE_FILE_SHARE_SIZE` = reserved size of the file share in GB
     NOTE: Azure Active Directory Authentication cannot be automated via Azure CLI, because the secret key is not submitted. Due to this, I will explain later in this tutorial how to activate this feature manually. Once this can be automated, you can use the commands from line 180 to 201 in `deploy.sh` to automate this process. This processs requires the following parameters:
     -  `AAD_ISSUER_URL` = issuer URL of your AAD (Use this tutorial to find the variable of your AAD: https://docs.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad#-configure-with-advanced-settings)
     - `SP_NAME` = name of the service principal 
@@ -65,7 +67,7 @@ If you want to deploy the MLflow tracking server on an Azure Web App for Contain
 9. Open `https://<WEB_APP_NAME>.azurewebsites.net` (Insert value of your variable `WEB_APP_NAME` in the URL) and check whether your service works as expected.
 
 ## 4.2 Enable CI/CD
-NOTE: Due to a bug in the Azure CLI, this is not automated in the `deploy.sh` script yet. The command is already included but commented out (line 119 to 125).
+NOTE: Due to a bug in a previous version of Azure CLI, this could not be automated. Due to an update, this can be fully automated and is already included in `deploy.sh` (line 119 to 125). Just for completeness these steps will explain you how you can achieve this manually:
 
 1. Open the [Azure Portal](https://portal.azure.com) and navigate to your resource group with the name of the variable `RG_NAME`.
 2. Click on your Web APP, which should have the name of the variable `WEB_APP_NAME`.
