@@ -137,12 +137,12 @@ az webapp config container set \
     --docker-registry-server-password $ACR_PASSWORD \
     --enable-app-service-storage true
 
-# Should be fixed according to: https://github.com/Azure/azure-cli/issues/7261
-echo "Enable continuous deployment for web app"
-az webapp deployment container config \
-    --name $WEB_APP_NAME \
-    --resource-group $RG_NAME \
-    --enable-cd true
+# unfixed bug according to: https://github.com/Azure/azure-cli/issues/7261 and https://github.com/MicrosoftDocs/azure-docs/issues/34240
+#echo "Enable continuous deployment for web app"
+#az webapp deployment container config \
+#    --name $WEB_APP_NAME \
+#    --resource-group $RG_NAME \
+#    --enable-cd true
 
 echo "Setting Azure container registry credentials"
 az webapp config appsettings set \
@@ -202,20 +202,20 @@ az webapp config storage-account list \
 # AZURE AD AUTHENTICATION AUTOMATION
 
 # Azure Active Directory and Service Principal parameters
-AAD_ISSUER_URL=<your-aad-issuer-url> # e.g. https://login.microsoftonline.com/AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE/
-SP_NAME=mlflowserviceprincipal
+#AAD_ISSUER_URL=<your-aad-issuer-url> # e.g. https://login.microsoftonline.com/AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE/
+#SP_NAME=mlflowserviceprincipal
 
-echo "Creating Azure Active Directory Service Principal"
-export SP_CLIENT_SECRET=$(az ad sp create-for-rbac --name $SP_NAME --query "password" --output tsv)
-export SP_CLIENT_ID=$(az ad sp list --show-mine --query "[?appDisplayName=='$SP_NAME'].appId" -o tsv)
+#echo "Creating Azure Active Directory Service Principal"
+#export SP_CLIENT_SECRET=$(az ad sp create-for-rbac --name $SP_NAME --query "password" --output tsv)
+#export SP_CLIENT_ID=$(az ad sp list --show-mine --query "[?appDisplayName=='$SP_NAME'].appId" -o tsv)
 
-echo "Enable Azure Active Directory Authentication"
-az webapp auth update \
-    --resource-group $RG_NAME \
-    --name $WEB_APP_NAME \
-    --enabled true \
-    --action LoginWithAzureActiveDirectory \
-    --aad-allowed-token-audiences https://$WEB_APP_NAME.azurewebsites.net/.auth/login/aad/callback \
-    --aad-client-id $SP_CLIENT_ID \
-    --aad-client-secret $SP_CLIENT_SECRET \
-    --aad-token-issuer-url $AAD_ISSUER_URL
+#echo "Enable Azure Active Directory Authentication"
+#az webapp auth update \
+#    --resource-group $RG_NAME \
+#    --name $WEB_APP_NAME \
+#    --enabled true \
+#    --action LoginWithAzureActiveDirectory \
+#    --aad-allowed-token-audiences https://$WEB_APP_NAME.azurewebsites.net/.auth/login/aad/callback \
+#    --aad-client-id $SP_CLIENT_ID \
+#    --aad-client-secret $SP_CLIENT_SECRET \
+#    --aad-token-issuer-url $AAD_ISSUER_URL
