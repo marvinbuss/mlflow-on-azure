@@ -14,8 +14,8 @@ The deployment has the following features:
 * Docker image supports SSH connection only within the Azure portal (Enterprise ready security)
 * Docker image is stored in private container registry (Azure Container Registry)
 * Detailed logs for the MLflow tracking server or the Azure Web App 
-* Continuous Integration and Continuous Deployment (CI/CD)
-* Azure AD Integration
+* Optional: Continuous Integration and Continuous Deployment (CI/CD)
+* Optional: Azure AD Integration
 
 <img src="pictures/MLflow_App_Service_Architecture.png" alt="Azure App Service Deployment of MLFlow Tracking Server"/>
 
@@ -67,16 +67,14 @@ If you want to deploy the MLflow tracking server on an Azure Web App for Contain
 8. Once the execution of the script finishes you can check the deployed resources in the [Azure Portal](https://portal.azure.com). Open `Resource Groups` and click on the resource group with the name of the variable `RG_NAME`. The resource group should include the following resources: Azure App Service, Azure App Service Plan, Azure Container Registry and an Azure Storage Account.
 9. Open `https://<WEB_APP_NAME>.azurewebsites.net` (Insert value of your variable `WEB_APP_NAME` in the URL) and check whether your service works as expected.
 
-## 4.2 Deprecated: Enabling CI/CD Manually
-NOTE: Due to a bug in a previous version of Azure CLI, this could not be automated. As a result of an update, this can be fully automated and is already included in `deploy.sh` (line 141 to 145). Just for completeness these steps will explain you how you can achieve this manually:
+## 4.2 Optional: Enable CI/CD
+NOTE: Due to a bug in Azure CLI, this cannot be automated, yet. The command is already included in `deploy.sh` (line 141 to 145) but commented out:
 
 1. Open the [Azure Portal](https://portal.azure.com) and navigate to your resource group with the name of the variable `RG_NAME`.
 2. Click on your Web APP, which should have the name of the variable `WEB_APP_NAME`.
 3. Follow the steps in this tutorial to enable CI/CD: https://docs.microsoft.com/en-us/azure/app-service/containers/app-service-linux-ci-cd#enable-continuous-deployment-with-acr
 
-## 4.3 Deprecated: Enable AAD Integration Manually
-This step is also fully automated in `deploy.sh` (line 201 to 221). Just for completeness these steps will explain you how you can achieve this manually:
-
+## 4.3 Optional: Enable AAD Integration Manually
 1. Open the [Azure Portal](https://portal.azure.com) and navigate to your resource group with the name of the variable `RG_NAME`.
 2. Click on your Web APP, which should have the name of the variable `WEB_APP_NAME`.
 3. Follow the steps in this tutorial to enable AAD Integration: https://docs.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad
