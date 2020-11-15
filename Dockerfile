@@ -2,10 +2,8 @@ FROM python:3.8
 
 LABEL maintainer "Marvin Buss (GitHub @marvinbuss)"
 
-# Setup the folder structure
-# RUN mkdir /code
+# Copy code folder
 COPY /code /code
-# WORKDIR /code
 
 # Install and enable SSH
 ENV SSH_PASSWD "root:Docker!"

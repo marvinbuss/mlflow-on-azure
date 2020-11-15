@@ -6,6 +6,7 @@ on:
     paths:
       - 'infra/**'
       - '.github/workflows/deployAzureInfrastructure.yml'
+  pull_request:
 
 env:
   AZURE_SUBSCRIPTION_ID: '558bd446-4212-46a2-908c-9ab0a628705e'
