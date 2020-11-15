@@ -1,4 +1,4 @@
-name: Docker
+name: MLFLow Docker Build
 
 on:
   push:

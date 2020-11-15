@@ -1,4 +1,4 @@
-name: Network Deployment
+name: Azure Deployment
 
 on:
   push:
@@ -101,7 +101,7 @@ jobs:
           az logout
 
   deployment:
-    needs: [ create-resource-group, validation ]
+    needs: [ validation ]
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
 
