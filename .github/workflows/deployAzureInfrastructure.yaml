@@ -42,7 +42,7 @@ jobs:
         region: ${{ env.AZURE_LOCATION }}
         template: $GITHUB_WORKSPACE/infra/VirtualNetwork/deploy.vnet.json
         parameters: $GITHUB_WORKSPACE/infra/VirtualNetwork/params.vnet.json
-        deploymentMode: Validate
+        deploymentMode: validate
     
     # Deploy Key Vault - validation
     - name: Deploy Key Vault - validation
@@ -55,7 +55,7 @@ jobs:
         region: ${{ env.AZURE_LOCATION }}
         template: $GITHUB_WORKSPACE/infra/KeyVault/deploy.keyVault.json
         parameters: $GITHUB_WORKSPACE/infra/KeyVault/params.keyVault.json
-        deploymentMode: Validate
+        deploymentMode: validate
     
     # Deploy Storage - validation
     - name: Deploy Storage - validation
@@ -68,7 +68,7 @@ jobs:
         region: ${{ env.AZURE_LOCATION }}
         template: $GITHUB_WORKSPACE/infra/Storage/deploy.storage.json
         parameters: $GITHUB_WORKSPACE/infra/Storage/params.storage.json
-        deploymentMode: Validate
+        deploymentMode: validate
     
     # Deploy Container Registry - validation
     - name: Deploy Container Registry - validation
@@ -81,7 +81,7 @@ jobs:
         region: ${{ env.AZURE_LOCATION }}
         template: $GITHUB_WORKSPACE/infra/ContainerRegistry/deploy.containerRegistry.json
         parameters: $GITHUB_WORKSPACE/infra/ContainerRegistry/params.containerRegistry.json
-        deploymentMode: Validate
+        deploymentMode: validate
     
     # Deploy App Service - validation
     - name: Deploy App Service - validation
@@ -94,7 +94,7 @@ jobs:
         region: ${{ env.AZURE_LOCATION }}
         template: $GITHUB_WORKSPACE/infra/AppService/deploy.appService.json
         parameters: $GITHUB_WORKSPACE/infra/AppService/params.appService.json
-        deploymentMode: Validate
+        deploymentMode: validate
     
     # Log out from Azure
     - name: Log out from Azure
