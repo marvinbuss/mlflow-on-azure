@@ -15,7 +15,7 @@ RUN apt-get update \
         && apt-get update \
 	&& apt-get install -y --no-install-recommends openssh-server \
 	&& echo "$SSH_PASSWD" | chpasswd 
-COPY /sshd_config /etc/ssh/
+COPY sshd_config /etc/ssh/
 EXPOSE 2222
 
 # Install dependencies
