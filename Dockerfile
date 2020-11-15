@@ -5,7 +5,7 @@ LABEL maintainer "Marvin Buss (GitHub @marvinbuss)"
 # Setup the folder structure
 RUN mkdir /code
 COPY /mlflow /code
-WORKDIR /code
+# WORKDIR /code
 
 # Install and enable SSH
 ENV SSH_PASSWD "root:Docker!"
@@ -15,7 +15,7 @@ RUN apt-get update \
         && apt-get update \
 	&& apt-get install -y --no-install-recommends openssh-server \
 	&& echo "$SSH_PASSWD" | chpasswd 
-COPY sshd_config /etc/ssh/
+COPY /code/sshd_config /etc/ssh/
 EXPOSE 2222
 
 # Install dependencies
