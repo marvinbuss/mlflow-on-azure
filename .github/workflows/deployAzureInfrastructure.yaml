@@ -1,0 +1,188 @@
+name: Network Deployment
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'infra/**'
+      - '.github/workflows/deployAzureInfrastructure.yml'
+
+env:
+  AZURE_SUBSCRIPTION_ID: '558bd446-4212-46a2-908c-9ab0a628705e'
+  AZURE_RESOURCE_GROUP_NAME_MLFLOW: mlflow-rg
+  AZURE_LOCATION: westeurope
+
+jobs:
+  validation:
+    runs-on: ubuntu-latest
+    
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - name: Check Out Repository
+      id: checkout_repository
+      uses: actions/checkout@v2
+    
+    # Login to Azure
+    - name: Azure Login
+      id: azure_login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    # Deploy vnet - validation
+    - name: Deploy vnet - validation
+      id: vnet_validation
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
+        resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
+        template: $GITHUB_WORKSPACE/infra/VirtualNetwork/deploy.vnet.json
+        parameters: $GITHUB_WORKSPACE/infra/VirtualNetwork/params.vnet.json
+        deploymentMode: Validate
+    
+    # Deploy Key Vault - validation
+    - name: Deploy Key Vault - validation
+      id: key_vault_validation
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
+        resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
+        template: $GITHUB_WORKSPACE/infra/KeyVault/deploy.keyVault.json
+        parameters: $GITHUB_WORKSPACE/infra/KeyVault/params.keyVault.json
+        deploymentMode: Validate
+    
+    # Deploy Storage - validation
+    - name: Deploy Storage - validation
+      id: storage_validation
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
+        resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
+        template: $GITHUB_WORKSPACE/infra/Storage/deploy.storage.json
+        parameters: $GITHUB_WORKSPACE/infra/Storage/params.storage.json
+        deploymentMode: Validate
+    
+    # Deploy Container Registry - validation
+    - name: Deploy Container Registry - validation
+      id: container_registry_validation
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
+        resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
+        template: $GITHUB_WORKSPACE/infra/ContainerRegistry/deploy.containerRegistry.json
+        parameters: $GITHUB_WORKSPACE/infra/ContainerRegistry/params.containerRegistry.json
+        deploymentMode: Validate
+    
+    # Deploy App Service - validation
+    - name: Deploy App Service - validation
+      id: app_service_validation
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
+        resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
+        template: $GITHUB_WORKSPACE/infra/AppService/deploy.appService.json
+        parameters: $GITHUB_WORKSPACE/infra/AppService/params.appService.json
+        deploymentMode: Validate
+    
+    # Log out from Azure
+    - name: Log out from Azure
+      id: azure_logout
+      uses: azure/cli@v1
+      with:
+        azcliversion: latest
+        inlineScript: |
+          az logout
+
+  deployment:
+    needs: [ create-resource-group, validation ]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - name: Check Out Repository
+      id: checkout_repository
+      uses: actions/checkout@v2
+    
+    # Login to Azure
+    - name: Azure Login
+      id: azure_login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    # Deploy vnet
+    - name: Deploy vnet
+      id: vnet_deployment
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
+        resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
+        template: $GITHUB_WORKSPACE/infra/VirtualNetwork/deploy.vnet.json
+        parameters: $GITHUB_WORKSPACE/infra/VirtualNetwork/params.vnet.json
+        deploymentMode: Incremental
+    
+    # Deploy Key Vault
+    - name: Deploy Key Vault
+      id: key_vault_deployment
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
+        resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
+        template: $GITHUB_WORKSPACE/infra/KeyVault/deploy.keyVault.json
+        parameters: $GITHUB_WORKSPACE/infra/KeyVault/params.keyVault.json
+        deploymentMode: Incremental
+    
+    # Deploy Storage
+    - name: Deploy Storage
+      id: storage_deployment
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
+        resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
+        template: $GITHUB_WORKSPACE/infra/Storage/deploy.storage.json
+        parameters: $GITHUB_WORKSPACE/infra/Storage/params.storage.json
+        deploymentMode: Incremental
+    
+    # Deploy Container Registry
+    - name: Deploy Container Registry
+      id: container_registry_deployment
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
+        resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
+        template: $GITHUB_WORKSPACE/infra/ContainerRegistry/deploy.containerRegistry.json
+        parameters: $GITHUB_WORKSPACE/infra/ContainerRegistry/params.containerRegistry.json
+        deploymentMode: Incremental
+    
+    # Deploy App Service
+    - name: Deploy App Service
+      id: app_service_deployment
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
+        resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
+        template: $GITHUB_WORKSPACE/infra/AppService/deploy.appService.json
+        parameters: $GITHUB_WORKSPACE/infra/AppService/params.appService.json
+        deploymentMode: Incremental
+    
+    # Log out from Azure
+    - name: Log out from Azure
+      id: azure_logout
+      uses: azure/cli@v1
+      with:
+        azcliversion: latest
+        inlineScript: |
+          az logout

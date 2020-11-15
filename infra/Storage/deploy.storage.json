@@ -1,0 +1,264 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Specifies the location for all resources."
+            }
+        },
+        "storageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the name of the storage account."
+            }
+        },
+        "storageAccountType": {
+            "type": "string",
+            "defaultValue": "Standard_ZRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "Standard_GRS",
+                "Standard_RAGRS",
+                "Standard_ZRS",
+                "Premium_LRS",
+                "Premium_ZRS",
+                "Standard_GZRS",
+                "Standard_RAGZRS"
+            ],
+            "metadata": {
+                "description": "Specifies the SKU of the storage account."
+            }
+        },
+        "keyVaultId": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the resource id of the key vault to store the storage access key."
+            }
+        },
+        "subnetId": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the id of the subnet which the private endpoint uses."
+            }
+        },
+        "privateDnsZoneId": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the resource id of the private DNS zone that should be used for the private endpoint."
+            }
+        }
+    },
+    "functions": [],
+    "variables": {
+        "location": "[parameters('location')]",
+        "storageAccountName": "[parameters('storageAccountName')]",
+        "storageAccountType": "[parameters('storageAccountType')]",
+        "keyVaultId": "[parameters('keyVaultId')]",
+        "keyVaultName": "[last(split(variables('keyVaultId'), '/'))]",
+        "subnetId": "[parameters('subnetId')]",
+        "privateDnsZoneId": "[parameters('privateDnsZoneId')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2020-08-01-preview",
+            "name": "[variables('storageAccountName')]",
+            "location": "[variables('location')]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "tags": {
+            },
+            "sku": {
+                "name": "[variables('storageAccountType')]"
+            },
+            "kind": "StorageV2",
+            "properties": {
+                "encryption": {
+                    "services": {
+                        "blob": {
+                            "enabled": true,
+                            "keyType": "Account"
+                        },
+                        "file": {
+                            "enabled": true,
+                            "keyType": "Account"
+                        },
+                        "table": {
+                            "enabled": true,
+                            "keyType": "Service"
+                        },
+                        "queue": {
+                            "enabled": true,
+                            "keyType": "Service"
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                },
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [
+                    ],
+                    "ipRules": [
+                    ],
+                    "defaultAction": "Deny"
+                },
+                "accessTier": "Hot",
+                "supportsHttpsTrafficOnly": true,
+                "isHnsEnabled": false,
+                "largeFileSharesState": "Disabled",
+                "minimumTlsVersion": "TLS1_2",
+                "allowBlobPublicAccess": false,
+                // "azureFilesIdentityBasedAuthentication": {
+                //     "activeDirectoryProperties": {
+                //         "azureStorageSid": "",
+                //         "domainGuid": "",
+                //         "domainName": "",
+                //         "domainSid": "",
+                //         "forestName": "",
+                //         "netBiosDomainName": ""
+                //     },
+                //     "directoryServiceOptions": "AD"
+                // },
+                // "customDomain": {
+                //     "name": "",
+                //     "useSubDomainName": false
+                // },
+                "routingPreference": {
+                    "routingChoice": "MicrosoftRouting",
+                    "publishMicrosoftEndpoints": false,
+                    "publishInternetEndpoints": false
+                }
+            },
+            "resources": [
+                {
+                    "type": "fileServices",
+                    "apiVersion": "2020-08-01-preview",
+                    "name": "default",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+                    ],
+                    "properties": {
+                        "cors": {
+                            "corsRules": []
+                        },
+                        "protocolSettings": {
+                            "smb": {
+                                "multichannel": {
+                                    "enabled": false
+                                }
+                            }
+                        },
+                        "shareDeleteRetentionPolicy": {
+                            "days": 365,
+                            "enabled": false
+                        }
+                    }
+                },
+                {
+                    "type": "fileServices/shares",
+                    "apiVersion": "2020-08-01-preview",
+                    "name": "[concat(variables('storageAccountName'), '/mlflow')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+                    ],
+                    "properties": {
+                        "metadata": {},
+                        "shareQuota": 2,
+                        "enabledProtocols": "SMB",
+                        "rootSquash": "NoRootSquash",
+                        "accessTier": "TransactionOptimized"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "SecretDeployment",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+            ],
+            "properties": {
+                "expressionEvaluationOptions": {
+                    "scope": "outer"
+                },
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.KeyVault/vaults/secrets",
+                            "name": "[concat(variables('keyVaultName'), '/storageAccountKey')]",
+                            "apiVersion": "2019-09-01",
+                            "properties": {
+                                "contentType": "text/plain",
+                                "value": "[listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2020-08-01-preview').keys[0].value]",
+                                "attributes": {
+                                    "enabled": true
+                                }
+                            }
+                        }
+                    ],
+                    "outputs": {}
+                }
+            },
+            "subscriptionId": "[split(variables('keyVaultId'), '/')[2]]",
+            "resourceGroup": "[split(variables('keyVaultId'), '/')[4]]"
+        },
+        {
+            "name": "[concat(variables('storageAccountName'), '-private-endpoint')]",
+            "type": "Microsoft.Network/privateEndpoints",
+            "apiVersion": "2020-05-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+            ],
+            "location": "[variables('location')]",
+            "properties": {
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[concat(variables('storageAccountName'), '-private-endpoint')]",
+                        "properties": {
+                            "privateLinkServiceId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+                            "groupIds": [
+                                "file"
+                            ]
+                        }
+                    }
+                ],
+                "manualPrivateLinkServiceConnections": [
+                ],
+                "subnet": {
+                    "id": "[variables('subnetId')]"
+                }
+            }
+        },
+        {
+            "name": "[concat(variables('storageAccountName'), '-private-endpoint', '/aRecord')]",
+            "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+            "apiVersion": "2020-05-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/privateEndpoints', variables('storageAccountName'), '-private-endpoint')]"
+            ],
+            "location": "[variables('location')]",
+            "properties": {
+                "privateDnsZoneConfigs": [
+                    {
+                        "name": "[concat(variables('storageAccountName'), '-private-endpoint', '-aRecord')]",
+                        "properties": {
+                            "privateDnsZoneId": "[variables('privateDnsZoneId')]"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "outputs": {
+    }
+}
