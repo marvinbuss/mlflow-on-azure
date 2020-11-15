@@ -5,7 +5,7 @@ LABEL maintainer "Marvin Buss (GitHub @marvinbuss)"
 # Setup the folder structure
 # RUN mkdir /code
 COPY /code /code
-WORKDIR /code
+# WORKDIR /code
 
 # Install and enable SSH
 ENV SSH_PASSWD "root:Docker!"
@@ -15,11 +15,11 @@ RUN apt-get update \
         && apt-get update \
 	&& apt-get install -y --no-install-recommends openssh-server \
 	&& echo "$SSH_PASSWD" | chpasswd 
-COPY sshd_config /etc/ssh/
+COPY /code/sshd_config /etc/ssh/
 EXPOSE 2222
 
 # Install dependencies
-RUN pip install -r /requirements.txt
+RUN pip install -r /code/requirements.txt
 
 # Define default server env variables
 ENV MLFLOW_SERVER_HOST 0.0.0.0
@@ -33,6 +33,6 @@ ENV MLFLOW_SERVER_WORKERS 1
 #ENV AZURE_STORAGE_CONNECTION_STRING <connection-string>
 
 # Start MLFlow tracking server
-RUN ["chmod", "u+x", "/startup.sh"]
+RUN ["chmod", "u+x", "/code/startup.sh"]
 EXPOSE 5000
-ENTRYPOINT ["sh", "./startup.sh"]
+ENTRYPOINT ["sh", "/code/startup.sh"]
