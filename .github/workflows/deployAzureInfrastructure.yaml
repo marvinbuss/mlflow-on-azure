@@ -36,9 +36,10 @@ jobs:
       id: vnet_validation
       uses: azure/arm-deploy@v1
       with:
-        scope: subscription
+        scope: resourcegroup
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
+        region: ${{ env.AZURE_LOCATION }}
         template: $GITHUB_WORKSPACE/infra/VirtualNetwork/deploy.vnet.json
         parameters: $GITHUB_WORKSPACE/infra/VirtualNetwork/params.vnet.json
         deploymentMode: Validate
@@ -48,9 +49,10 @@ jobs:
       id: key_vault_validation
       uses: azure/arm-deploy@v1
       with:
-        scope: subscription
+        scope: resourcegroup
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
+        region: ${{ env.AZURE_LOCATION }}
         template: $GITHUB_WORKSPACE/infra/KeyVault/deploy.keyVault.json
         parameters: $GITHUB_WORKSPACE/infra/KeyVault/params.keyVault.json
         deploymentMode: Validate
@@ -60,9 +62,10 @@ jobs:
       id: storage_validation
       uses: azure/arm-deploy@v1
       with:
-        scope: subscription
+        scope: resourcegroup
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
+        region: ${{ env.AZURE_LOCATION }}
         template: $GITHUB_WORKSPACE/infra/Storage/deploy.storage.json
         parameters: $GITHUB_WORKSPACE/infra/Storage/params.storage.json
         deploymentMode: Validate
@@ -72,9 +75,10 @@ jobs:
       id: container_registry_validation
       uses: azure/arm-deploy@v1
       with:
-        scope: subscription
+        scope: resourcegroup
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
+        region: ${{ env.AZURE_LOCATION }}
         template: $GITHUB_WORKSPACE/infra/ContainerRegistry/deploy.containerRegistry.json
         parameters: $GITHUB_WORKSPACE/infra/ContainerRegistry/params.containerRegistry.json
         deploymentMode: Validate
@@ -84,9 +88,10 @@ jobs:
       id: app_service_validation
       uses: azure/arm-deploy@v1
       with:
-        scope: subscription
+        scope: resourcegroup
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
+        region: ${{ env.AZURE_LOCATION }}
         template: $GITHUB_WORKSPACE/infra/AppService/deploy.appService.json
         parameters: $GITHUB_WORKSPACE/infra/AppService/params.appService.json
         deploymentMode: Validate
@@ -124,9 +129,10 @@ jobs:
       id: vnet_deployment
       uses: azure/arm-deploy@v1
       with:
-        scope: subscription
+        scope: resourcegroup
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
+        region: ${{ env.AZURE_LOCATION }}
         template: $GITHUB_WORKSPACE/infra/VirtualNetwork/deploy.vnet.json
         parameters: $GITHUB_WORKSPACE/infra/VirtualNetwork/params.vnet.json
         deploymentMode: Incremental
@@ -136,9 +142,10 @@ jobs:
       id: key_vault_deployment
       uses: azure/arm-deploy@v1
       with:
-        scope: subscription
+        scope: resourcegroup
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
+        region: ${{ env.AZURE_LOCATION }}
         template: $GITHUB_WORKSPACE/infra/KeyVault/deploy.keyVault.json
         parameters: $GITHUB_WORKSPACE/infra/KeyVault/params.keyVault.json
         deploymentMode: Incremental
@@ -148,9 +155,10 @@ jobs:
       id: storage_deployment
       uses: azure/arm-deploy@v1
       with:
-        scope: subscription
+        scope: resourcegroup
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
+        region: ${{ env.AZURE_LOCATION }}
         template: $GITHUB_WORKSPACE/infra/Storage/deploy.storage.json
         parameters: $GITHUB_WORKSPACE/infra/Storage/params.storage.json
         deploymentMode: Incremental
@@ -160,9 +168,10 @@ jobs:
       id: container_registry_deployment
       uses: azure/arm-deploy@v1
       with:
-        scope: subscription
+        scope: resourcegroup
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
+        region: ${{ env.AZURE_LOCATION }}
         template: $GITHUB_WORKSPACE/infra/ContainerRegistry/deploy.containerRegistry.json
         parameters: $GITHUB_WORKSPACE/infra/ContainerRegistry/params.containerRegistry.json
         deploymentMode: Incremental
@@ -172,9 +181,10 @@ jobs:
       id: app_service_deployment
       uses: azure/arm-deploy@v1
       with:
-        scope: subscription
+        scope: resourcegroup
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
+        region: ${{ env.AZURE_LOCATION }}
         template: $GITHUB_WORKSPACE/infra/AppService/deploy.appService.json
         parameters: $GITHUB_WORKSPACE/infra/AppService/params.appService.json
         deploymentMode: Incremental
