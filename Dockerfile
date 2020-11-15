@@ -1,10 +1,10 @@
-FROM python:3.8-stretch
+FROM python:3.8
 
 LABEL maintainer "Marvin Buss (GitHub @marvinbuss)"
 
 # Setup the folder structure
 RUN mkdir /code
-ADD ./mlflow/ /code/
+COPY /mlflow /code
 WORKDIR /code
 
 # Install and enable SSH
