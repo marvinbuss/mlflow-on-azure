@@ -3,8 +3,8 @@ FROM python:3.8
 LABEL maintainer "Marvin Buss (GitHub @marvinbuss)"
 
 # Setup the folder structure
-RUN mkdir /code
-COPY /mlflow /code
+# RUN mkdir /code
+COPY /code /code
 WORKDIR /code
 
 # Install and enable SSH
@@ -15,11 +15,11 @@ RUN apt-get update \
         && apt-get update \
 	&& apt-get install -y --no-install-recommends openssh-server \
 	&& echo "$SSH_PASSWD" | chpasswd 
-COPY /mlflow/sshd_config /etc/ssh/
+COPY /sshd_config /etc/ssh/
 EXPOSE 2222
 
 # Install dependencies
-RUN pip install -r /mlflow/requirements.txt
+RUN pip install -r /requirements.txt
 
 # Define default server env variables
 ENV MLFLOW_SERVER_HOST 0.0.0.0
