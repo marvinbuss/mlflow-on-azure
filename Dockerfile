@@ -1,4 +1,4 @@
-FROM python:3.7
+FROM python:3.8-stretch
 
 LABEL maintainer "Marvin Buss (GitHub @marvinbuss)"
 
