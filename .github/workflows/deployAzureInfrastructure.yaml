@@ -40,8 +40,8 @@ jobs:
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
         region: ${{ env.AZURE_LOCATION }}
-        template: $GITHUB_WORKSPACE/infra/VirtualNetwork/deploy.vnet.json
-        parameters: $GITHUB_WORKSPACE/infra/VirtualNetwork/params.vnet.json
+        template: ${{ github.workspace }}/infra/VirtualNetwork/deploy.vnet.json
+        parameters: ${{ github.workspace }}/infra/VirtualNetwork/params.vnet.json
         deploymentMode: validate
     
     # Deploy Key Vault - validation
@@ -53,8 +53,8 @@ jobs:
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
         region: ${{ env.AZURE_LOCATION }}
-        template: $GITHUB_WORKSPACE/infra/KeyVault/deploy.keyVault.json
-        parameters: $GITHUB_WORKSPACE/infra/KeyVault/params.keyVault.json
+        template: ${{ github.workspace }}/infra/KeyVault/deploy.keyVault.json
+        parameters: ${{ github.workspace }}/infra/KeyVault/params.keyVault.json
         deploymentMode: validate
     
     # Deploy Storage - validation
@@ -66,8 +66,8 @@ jobs:
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
         region: ${{ env.AZURE_LOCATION }}
-        template: $GITHUB_WORKSPACE/infra/Storage/deploy.storage.json
-        parameters: $GITHUB_WORKSPACE/infra/Storage/params.storage.json
+        template: ${{ github.workspace }}/infra/Storage/deploy.storage.json
+        parameters: ${{ github.workspace }}/infra/Storage/params.storage.json
         deploymentMode: validate
     
     # Deploy Container Registry - validation
@@ -79,8 +79,8 @@ jobs:
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
         region: ${{ env.AZURE_LOCATION }}
-        template: $GITHUB_WORKSPACE/infra/ContainerRegistry/deploy.containerRegistry.json
-        parameters: $GITHUB_WORKSPACE/infra/ContainerRegistry/params.containerRegistry.json
+        template: ${{ github.workspace }}/infra/ContainerRegistry/deploy.containerRegistry.json
+        parameters: ${{ github.workspace }}/infra/ContainerRegistry/params.containerRegistry.json
         deploymentMode: validate
     
     # Deploy App Service - validation
@@ -92,8 +92,8 @@ jobs:
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
         region: ${{ env.AZURE_LOCATION }}
-        template: $GITHUB_WORKSPACE/infra/AppService/deploy.appService.json
-        parameters: $GITHUB_WORKSPACE/infra/AppService/params.appService.json
+        template: ${{ github.workspace }}/infra/AppService/deploy.appService.json
+        parameters: ${{ github.workspace }}/infra/AppService/params.appService.json
         deploymentMode: validate
     
     # Log out from Azure
@@ -133,8 +133,8 @@ jobs:
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
         region: ${{ env.AZURE_LOCATION }}
-        template: $GITHUB_WORKSPACE/infra/VirtualNetwork/deploy.vnet.json
-        parameters: $GITHUB_WORKSPACE/infra/VirtualNetwork/params.vnet.json
+        template: ${{ github.workspace }}/infra/VirtualNetwork/deploy.vnet.json
+        parameters: ${{ github.workspace }}/infra/VirtualNetwork/params.vnet.json
         deploymentMode: Incremental
     
     # Deploy Key Vault
@@ -146,8 +146,8 @@ jobs:
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
         region: ${{ env.AZURE_LOCATION }}
-        template: $GITHUB_WORKSPACE/infra/KeyVault/deploy.keyVault.json
-        parameters: $GITHUB_WORKSPACE/infra/KeyVault/params.keyVault.json
+        template: ${{ github.workspace }}/infra/KeyVault/deploy.keyVault.json
+        parameters: ${{ github.workspace }}/infra/KeyVault/params.keyVault.json
         deploymentMode: Incremental
     
     # Deploy Storage
@@ -159,8 +159,8 @@ jobs:
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
         region: ${{ env.AZURE_LOCATION }}
-        template: $GITHUB_WORKSPACE/infra/Storage/deploy.storage.json
-        parameters: $GITHUB_WORKSPACE/infra/Storage/params.storage.json
+        template: ${{ github.workspace }}/infra/Storage/deploy.storage.json
+        parameters: ${{ github.workspace }}/infra/Storage/params.storage.json
         deploymentMode: Incremental
     
     # Deploy Container Registry
@@ -172,8 +172,8 @@ jobs:
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
         region: ${{ env.AZURE_LOCATION }}
-        template: $GITHUB_WORKSPACE/infra/ContainerRegistry/deploy.containerRegistry.json
-        parameters: $GITHUB_WORKSPACE/infra/ContainerRegistry/params.containerRegistry.json
+        template: ${{ github.workspace }}/infra/ContainerRegistry/deploy.containerRegistry.json
+        parameters: ${{ github.workspace }}/infra/ContainerRegistry/params.containerRegistry.json
         deploymentMode: Incremental
     
     # Deploy App Service
@@ -185,8 +185,8 @@ jobs:
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
         region: ${{ env.AZURE_LOCATION }}
-        template: $GITHUB_WORKSPACE/infra/AppService/deploy.appService.json
-        parameters: $GITHUB_WORKSPACE/infra/AppService/params.appService.json
+        template: ${{ github.workspace }}/infra/AppService/deploy.appService.json
+        parameters: ${{ github.workspace }}/infra/AppService/params.appService.json
         deploymentMode: Incremental
     
     # Log out from Azure
