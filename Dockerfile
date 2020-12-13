@@ -9,7 +9,8 @@ COPY /code /code
 RUN apt-get update \
         && apt-get install -y --no-install-recommends openssh-server \
         && pip install --upgrade pip \
-        && pip install -r /code/requirements.txt
+        && pip install -r /code/requirements.txt \
+        && rm -rf /var/lib/apt/lists/*
 
 # Setup SSH
 RUN rm -f /etc/ssh/sshd_config
