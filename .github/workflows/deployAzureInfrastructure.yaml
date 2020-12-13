@@ -83,18 +83,18 @@ jobs:
         parameters: ${{ github.workspace }}/infra/ContainerRegistry/params.containerRegistry.json
         deploymentMode: validate
     
-    # Deploy App Service - validation
-    - name: Deploy App Service - validation
-      id: app_service_validation
-      uses: azure/arm-deploy@v1
-      with:
-        scope: resourcegroup
-        subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
-        resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
-        region: ${{ env.AZURE_LOCATION }}
-        template: ${{ github.workspace }}/infra/AppService/deploy.appService.json
-        parameters: ${{ github.workspace }}/infra/AppService/params.appService.json
-        deploymentMode: validate
+    # # Deploy App Service - validation
+    # - name: Deploy App Service - validation
+    #   id: app_service_validation
+    #   uses: azure/arm-deploy@v1
+    #   with:
+    #     scope: resourcegroup
+    #     subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
+    #     resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
+    #     region: ${{ env.AZURE_LOCATION }}
+    #     template: ${{ github.workspace }}/infra/AppService/deploy.appService.json
+    #     parameters: ${{ github.workspace }}/infra/AppService/params.appService.json
+    #     deploymentMode: validate
     
     # Log out from Azure
     - name: Log out from Azure
@@ -176,18 +176,18 @@ jobs:
         parameters: ${{ github.workspace }}/infra/ContainerRegistry/params.containerRegistry.json
         deploymentMode: Incremental
     
-    # Deploy App Service
-    - name: Deploy App Service
-      id: app_service_deployment
-      uses: azure/arm-deploy@v1
-      with:
-        scope: resourcegroup
-        subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
-        resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
-        region: ${{ env.AZURE_LOCATION }}
-        template: ${{ github.workspace }}/infra/AppService/deploy.appService.json
-        parameters: ${{ github.workspace }}/infra/AppService/params.appService.json
-        deploymentMode: Incremental
+    # # Deploy App Service
+    # - name: Deploy App Service
+    #   id: app_service_deployment
+    #   uses: azure/arm-deploy@v1
+    #   with:
+    #     scope: resourcegroup
+    #     subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
+    #     resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME_MLFLOW }}
+    #     region: ${{ env.AZURE_LOCATION }}
+    #     template: ${{ github.workspace }}/infra/AppService/deploy.appService.json
+    #     parameters: ${{ github.workspace }}/infra/AppService/params.appService.json
+    #     deploymentMode: Incremental
     
     # Log out from Azure
     - name: Log out from Azure

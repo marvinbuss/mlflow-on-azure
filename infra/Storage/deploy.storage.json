@@ -244,7 +244,7 @@
             "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
             "apiVersion": "2020-05-01",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/privateEndpoints', variables('storageAccountName'), '-private-endpoint')]"
+                "[resourceId('Microsoft.Network/privateEndpoints',concat(variables('storageAccountName'), '-private-endpoint'))]"
             ],
             "location": "[variables('location')]",
             "properties": {
