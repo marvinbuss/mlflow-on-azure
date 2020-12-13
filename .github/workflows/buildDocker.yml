@@ -3,8 +3,9 @@ name: MLFLow Docker Build
 on:
   push:
     # Publish 'main' as Docker 'latest' image.
-    # branches:
-    #   - main
+    branches:
+      - main
+      - rebuild
 
     # Publish 'v1.2.3' tags as releases.
     tags:
