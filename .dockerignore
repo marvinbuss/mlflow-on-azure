@@ -1,0 +1,5 @@
+*
+!Dockerfile
+!code/requirements.txt
+!code/sshd_config
+!code/startup.sh
