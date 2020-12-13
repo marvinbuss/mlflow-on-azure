@@ -2,9 +2,6 @@ FROM python:3.8
 
 LABEL maintainer="Marvin Buss (GitHub @marvinbuss)"
 
-# Copy code folder
-COPY /code /code
-
 # Install dependencies
 RUN apt-get update \
         && apt-get install -y --no-install-recommends openssh-server \
