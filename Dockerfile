@@ -6,7 +6,7 @@ LABEL maintainer="Marvin Buss (GitHub @marvinbuss)"
 RUN apt-get update \
         && apt-get install -y --no-install-recommends openssh-server \
         && pip install --upgrade pip \
-        && pip install -r /code/requirements.txt
+        && pip install -r code/requirements.txt
 
 # Setup SSH
 RUN rm -f /etc/ssh/sshd_config
