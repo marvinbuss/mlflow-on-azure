@@ -1,7 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 echo "Starting SSH ..."
+sed -i "s/SSH_PORT/$SSH_PORT/g" /etc/ssh/sshd_config
 service ssh start
 
 echo "Starting MLflow Tracking Server ..."

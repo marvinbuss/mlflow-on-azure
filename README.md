@@ -17,7 +17,7 @@ The deployment has the following features:
 * Optional: Continuous Integration and Continuous Deployment (CI/CD)
 * Optional: Azure AD Integration
 
-<img src="pictures/MLflow_App_Service_Architecture.png" alt="Azure App Service Deployment of MLFlow Tracking Server"/>
+<img src="docs/pictures/MLflow_App_Service_Architecture.png" alt="Azure App Service Deployment of MLFlow Tracking Server"/>
 
 # 3. Local deployment
 If you want to test the Docker container locally, then please follow these steps:
