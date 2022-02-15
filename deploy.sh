@@ -1,10 +1,9 @@
 
-# ATTENTION je n'ai pas implémenter le InfraAsCode pour la database
-# il faut créer l'instance postgresql avant (et mieux vérifier les coûts)
-# et dedans créer la database "store" dans postgres. 
-# Mais il faut ajouter l'IP de l'ordinateur et des VM et de tous les ordi qui auront besoin de ça sur l'azure database ! 
-# Sinon on a l'erreur : psql: error: FATAL:  no pg_hba.conf entry for host "80.236.40.170", user "qmpostgresql", database "qmpostgres@qmpostgresql", SSL on
-# depuis une connexion dbeaver depuis mon mac j'ai créé une database sur la tablespace "Default" (et non "pg_default") et le user "qmpostgres"
+# WARN I didn't implement PostgreSQL instance here.
+# you need to deploy it from the Azure portal (so you can check the cost)
+# then you need to create the database called "store" in it
+# example, I connected using my computer so I enabled my IP adress on the Azure portal in the postgres instance/Security
+# from dbeaver, I created a database "store" on the tablespace "Default" (instead of "pg_default") using user "qmpostgres"
 
 export POSTGRESHOSTNAME=qmpostgresql
 export POSTGRESCOMPLETEHOSTNAME=qmpostgresql.postgres.database.azure.com
@@ -13,20 +12,13 @@ export POSTGRES_PASSWORD=<PASSWORD DE LA DATABASE>
 export POSTGRES_CONN_STRING="postgresql://${POSTGRES_USERNAME}:$POSTGRES_PASSWORD@$POSTGRESCOMPLETEHOSTNAME:5432/store"
 
 
-#  locally : 
+#  locally : we can check the connexion with the postgres db and the azure blobs (creation of multiple tables and artifacts)
 docker run -p 5000:5000 \
 --env MLFLOW_SERVER_DEFAULT_ARTIFACT_ROOT=wasbs://$STORAGE_CONTAINER_NAME@$STORAGE_ACCOUNT_NAME.blob.core.windows.net/artifacts \
 --env AZURE_STORAGE_CONNECTION_STRING==$STORAGE_CONNECTION_STRING \
---env MLFLOW_SERVER_FILE_STORE="postgresql://<user>:<password>@doccano-amw-state.postgres.database.azure.com:5432/store" \
+--env MLFLOW_SERVER_FILE_STORE=$POSTGRES_CONN_STRING \
 --env PGSSLMODE=require \
 -it ${DOCKER_IMAGE_NAME}:latest
-
-#!/bin/bash
-
-set -o errexit
-set -o pipefail
-set -o nounset
-#set -o xtrace # For debugging
 
 #####################
 # PARAMETERS
@@ -34,7 +26,7 @@ set -o nounset
 az account set --subscription ms_annual_subscription
 
 # Azure parameters
-SUBSCRIPTION_ID='00891af0-d423-4131-b130-dacbf1950d92'
+SUBSCRIPTION_ID='<ID SUBCRIPTION>'
 
 # Resource group parameters
 RG_NAME='QM_MLFlow'
