@@ -1,3 +1,26 @@
+
+# ATTENTION je n'ai pas implémenter le InfraAsCode pour la database
+# il faut créer l'instance postgresql avant (et mieux vérifier les coûts)
+# et dedans créer la database "store" dans postgres. 
+# Mais il faut ajouter l'IP de l'ordinateur et des VM et de tous les ordi qui auront besoin de ça sur l'azure database ! 
+# Sinon on a l'erreur : psql: error: FATAL:  no pg_hba.conf entry for host "80.236.40.170", user "qmpostgresql", database "qmpostgres@qmpostgresql", SSL on
+# depuis une connexion dbeaver depuis mon mac j'ai créé une database sur la tablespace "Default" (et non "pg_default") et le user "qmpostgres"
+
+export POSTGRESHOSTNAME=qmpostgresql
+export POSTGRESCOMPLETEHOSTNAME=qmpostgresql.postgres.database.azure.com
+export POSTGRES_USERNAME=qmpostgres@qmpostgresql
+export POSTGRES_PASSWORD=<PASSWORD DE LA DATABASE>
+export POSTGRES_CONN_STRING="postgresql://${POSTGRES_USERNAME}:$POSTGRES_PASSWORD@$POSTGRESCOMPLETEHOSTNAME:5432/store"
+
+
+#  locally : 
+docker run -p 5000:5000 \
+--env MLFLOW_SERVER_DEFAULT_ARTIFACT_ROOT=wasbs://$STORAGE_CONTAINER_NAME@$STORAGE_ACCOUNT_NAME.blob.core.windows.net/artifacts \
+--env AZURE_STORAGE_CONNECTION_STRING==$STORAGE_CONNECTION_STRING \
+--env MLFLOW_SERVER_FILE_STORE="postgresql://<user>:<password>@doccano-amw-state.postgres.database.azure.com:5432/store" \
+--env PGSSLMODE=require \
+-it ${DOCKER_IMAGE_NAME}:latest
+
 #!/bin/bash
 
 set -o errexit
@@ -8,38 +31,39 @@ set -o nounset
 #####################
 # PARAMETERS
 
+az account set --subscription ms_annual_subscription
+
 # Azure parameters
-SUBSCRIPTION_ID=<your-subscription-id>
+SUBSCRIPTION_ID='00891af0-d423-4131-b130-dacbf1950d92'
 
 # Resource group parameters
-RG_NAME=mlflow-rg
+RG_NAME='QM_MLFlow'
 RG_LOCATION=westeurope
 
 # Container registry parameters
-ACR_NAME=mlflowcontainerregistry
+ACR_NAME='mlflowacr'
 
 # Docker image parameters
-DOCKER_IMAGE_NAME=mlflowimage
-DOCKER_IMAGE_TAG=latest
+DOCKER_IMAGE_NAME='mlflowimage'
+DOCKER_IMAGE_TAG='latest'
 
 # App service plan parameters
-ASP_NAME=mlflowappserviceplan
+ASP_NAME='mlflow-hosting'
 
 # Web app parameters
-WEB_APP_NAME=mlflow
+WEB_APP_NAME='mlflow-service'
 
 # MLFlow settings
 MLFLOW_HOST=0.0.0.0
 MLFLOW_PORT=5000
 MLFLOW_WORKERS=1
-MLFLOW_FILESTORE=/mlruns/mlruns
+# MLFLOW_FILESTORE=/mlruns/mlruns
+# MLFLOW_TRACKING_URI='wasbs://artifacts@amwstorageaccount.blob.core.windows.net/artifacts'
 
 # Storage parameters
-STORAGE_ACCOUNT_NAME=storage$RANDOM
-STORAGE_CONTAINER_NAME=mlflow
+STORAGE_ACCOUNT_NAME='qmmlflowblobstorage'
+STORAGE_CONTAINER_NAME='artifacts'
 STORAGE_MOUNT_POINT=/mlruns
-STORAGE_FILE_SHARE_NAME=mlflow
-STORAGE_FILE_SHARE_SIZE=2
 
 #####################
 # LOGIN
@@ -48,16 +72,15 @@ echo "Logging into Azure"
 az login
 
 echo "Setting default subscription: $SUBSCRIPTION_ID"
-az account set \
-    --subscription $SUBSCRIPTION_ID
+az account set --subscription $SUBSCRIPTION_ID
 
 #####################
 # DEPLOYMENT
 
-echo "Creating resource group: $RG_NAME"
-az group create \
-    --name $RG_NAME \
-    --location $RG_LOCATION
+# echo "Creating resource group: $RG_NAME"
+# az group create \
+#     --name $RG_NAME \
+#     --location $RG_LOCATION
 
 echo "Creating storage account: $STORAGE_ACCOUNT_NAME"
 az storage account create \
@@ -70,12 +93,6 @@ echo "Creating storage container for MLflow artifacts: $STORAGE_CONTAINER_NAME"
 az storage container create \
     --name $STORAGE_CONTAINER_NAME \
     --account-name $STORAGE_ACCOUNT_NAME
-
-echo "Creating file share for mounting to MLflow container: $STORAGE_CONTAINER_NAME"
-az storage share create \
-    --name $STORAGE_FILE_SHARE_NAME \
-    --account-name $STORAGE_ACCOUNT_NAME \
-    --quota $STORAGE_FILE_SHARE_SIZE
 
 echo "Exporting storage keys: $STORAGE_ACCOUNT_NAME"
 export STORAGE_ACCESS_KEY=$(az storage account keys list --resource-group $RG_NAME --account-name $STORAGE_ACCOUNT_NAME --query "[0].value" --output tsv)
@@ -97,6 +114,8 @@ docker login $ACR_NAME.azurecr.io \
     --username "$ACR_USERNAME" \
     --password "$ACR_PASSWORD"
 
+# le build pose problème sur mac M1 à cause de scipy.
+# je build sur un VM GCP et je vais push sur le acr depuis cette VM.
 echo "Building Docker image from file: $DOCKER_IMAGE_NAME"
 cd docker
 docker build \
@@ -137,13 +156,6 @@ az webapp config container set \
     --docker-registry-server-password $ACR_PASSWORD \
     --enable-app-service-storage true
 
-# unfixed bug according to: https://github.com/Azure/azure-cli/issues/7261 and https://github.com/MicrosoftDocs/azure-docs/issues/34240
-#echo "Enable continuous deployment for web app"
-#az webapp deployment container config \
-#    --name $WEB_APP_NAME \
-#    --resource-group $RG_NAME \
-#    --enable-cd true
-
 echo "Setting Azure container registry credentials"
 az webapp config appsettings set \
     --resource-group $RG_NAME \
@@ -164,7 +176,7 @@ az webapp config appsettings set \
 az webapp config appsettings set \
     --resource-group $RG_NAME \
     --name $WEB_APP_NAME \
-    --settings MLFLOW_SERVER_DEFAULT_ARTIFACT_ROOT=wasbs://$STORAGE_CONTAINER_NAME@$STORAGE_ACCOUNT_NAME.blob.core.windows.net/mlartefacts
+    --settings MLFLOW_SERVER_DEFAULT_ARTIFACT_ROOT=wasbs://$STORAGE_CONTAINER_NAME@$STORAGE_ACCOUNT_NAME.blob.core.windows.net/artifacts                             
 az webapp config appsettings set \
     --resource-group $RG_NAME \
     --name $WEB_APP_NAME \
@@ -180,25 +192,35 @@ az webapp config appsettings set \
 az webapp config appsettings set \
     --resource-group $RG_NAME \
     --name $WEB_APP_NAME \
-    --settings MLFLOW_SERVER_FILE_STORE=$MLFLOW_FILESTORE
+    --settings MLFLOW_SERVER_FILE_STORE=$POSTGRES_CONN_STRING
+az webapp config appsettings set \
+    --resource-group $RG_NAME \
+    --name $WEB_APP_NAME \
+    --settings PGSSLMODE='require' 
 
-echo "Linking storage account to web app"
+# add ip to postgresql instance firewall
+az webapp show --resource-group $RG_NAME --name $WEB_APP_NAME --query outboundIpAddresses --output tsv
+# Le app service a des static IP qu'on enregistre dans le firewall des IP à laisser passer de PostgreSQL
+
+
+# echo "Linking storage account to web app"
 az webapp config storage-account add \
     --resource-group $RG_NAME \
     --name $WEB_APP_NAME \
     --custom-id $STORAGE_ACCOUNT_NAME \
-    --storage-type AzureFiles \
+    --storage-type AzureBlob \
     --share-name $STORAGE_CONTAINER_NAME \
     --account-name $STORAGE_ACCOUNT_NAME \
     --access-key $STORAGE_ACCESS_KEY \
     --mount-path $STORAGE_MOUNT_POINT
 
-echo "Verify linked storage account: $STORAGE_ACCOUNT_NAME"
+# echo "Verify linked storage account: $STORAGE_ACCOUNT_NAME"
 az webapp config storage-account list \
     --resource-group $RG_NAME \
     --name $WEB_APP_NAME
 
 #####################
+# TODO 
 # AZURE AD AUTHENTICATION AUTOMATION
 
 # Azure Active Directory and Service Principal parameters

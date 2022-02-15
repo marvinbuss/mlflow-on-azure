@@ -12,6 +12,7 @@ ADD . /code/
 ENV MLFLOW_SERVER_HOST 0.0.0.0
 ENV MLFLOW_SERVER_PORT 5000
 ENV MLFLOW_SERVER_WORKERS 1
+ENV PGSSLMODE require
 
 # define application settings at deployment
 #ENV MLFLOW_SERVER_FILE_STORE <local/storage/location>

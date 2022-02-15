@@ -1,0 +1,10 @@
+name: mlflow
+channels:
+  - default
+  - conda-forge
+dependencies:
+  - python=3.9
+  - mlflow==1.23.1
+  - scikit-learn
+  - ipython
+  - azure-storage-blob==12.6.0 
